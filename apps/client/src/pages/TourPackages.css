@@ -1,0 +1,64 @@
+/* Tour packages page styles - extends App.css */
+.tour-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.tour-card img {
+  transition: transform 0.5s ease;
+}
+
+.tour-card:hover img {
+  transform: scale(1.1);
+}
+
+.tour-card-content {
+  position: relative;
+}
+
+.tour-card h3 {
+  color: var(--primary-color);
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.tour-meta {
+  display: flex;
+  gap: 20px;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+
+.tour-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.tour-season {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.season-tag {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+
+.tour-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-color);
+}
