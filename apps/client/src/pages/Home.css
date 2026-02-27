@@ -1,8 +1,8 @@
 /* Hero Section */
 .hero {
   position: relative;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 64, 175, 0.9) 100%),
-              url('https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=1920&q=80') center/cover no-repeat;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(30, 64, 175, 0.3) 100%),
+              url('https://images.unsplash.com/photo-1568454537842-d933259bb258?w=1920&q=80') center/cover no-repeat;
   color: white;
   padding: 120px 20px 80px;
   text-align: center;
@@ -523,7 +523,7 @@
 /* CTA Section */
 .cta-section {
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 64, 175, 0.9) 100%),
-              url('https://images.unsplash.com/photo-1591825729269-caeb344f6df2?w=1920&q=80') center/cover no-repeat;
+              url('https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=1920&q=80') center/cover no-repeat;
   color: white;
   padding: 100px 20px;
   text-align: center;

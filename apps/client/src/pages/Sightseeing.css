@@ -6,8 +6,8 @@
 
 /* Page Header */
 .sightseeing-page .page-header {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 64, 175, 0.9) 100%),
-              url('https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=1920&q=80') center/cover no-repeat;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(30, 64, 175, 0.3) 100%),
+              url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80') center/cover no-repeat;
   padding: 80px 20px 60px;
   position: relative;
   overflow: hidden;

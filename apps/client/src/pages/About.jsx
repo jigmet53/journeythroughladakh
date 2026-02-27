@@ -38,9 +38,9 @@ function About() {
             </div>
             <div className="story-image">
               <img 
-                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80" 
+                src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800&q=80" 
                 alt="Ladakh Mountain Landscape"
-                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800&q=80' }}
+                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800&q=80' }}
               />
             </div>
           </div>

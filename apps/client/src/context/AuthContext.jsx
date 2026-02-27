@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import { authAPI, setAccessToken, clearAccessToken } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -13,33 +13,30 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Set axios default authorization header
+  // Load user on mount (try to refresh token)
   useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      loadUser();
-    } else {
-      delete axios.defaults.headers.common['Authorization'];
-      setLoading(false);
-    }
-  }, [token]);
+    loadUser();
+  }, []);
 
-  // Load user data
+  // Load user data (will automatically try to refresh if needed)
   const loadUser = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/auth/me');
+      setLoading(true);
+      const response = await authAPI.getProfile();
+      
       if (response.data.success) {
         setUser(response.data.user);
+        setIsAuthenticated(true);
       }
     } catch (error) {
       console.error('Failed to load user:', error);
-      // If token is invalid, clear it
-      if (error.response?.status === 401) {
-        logout();
-      }
+      // If refresh fails, user stays logged out
+      setUser(null);
+      setIsAuthenticated(false);
+      clearAccessToken();
     } finally {
       setLoading(false);
     }
@@ -48,16 +45,12 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
-        email,
-        password,
-      });
+      const response = await authAPI.login(email, password);
 
       if (response.data.success) {
-        const { token, user } = response.data;
-        localStorage.setItem('token', token);
-        setToken(token);
-        setUser(user);
+        // Access token is already stored in memory by authAPI.login
+        setUser(response.data.user);
+        setIsAuthenticated(true);
         return { success: true, message: response.data.message };
       }
     } catch (error) {
@@ -72,17 +65,12 @@ export const AuthProvider = ({ children }) => {
   // Register function
   const register = async (username, email, password) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
-        username,
-        email,
-        password,
-      });
+      const response = await authAPI.register(username, email, password);
 
       if (response.data.success) {
-        const { token, user } = response.data;
-        localStorage.setItem('token', token);
-        setToken(token);
-        setUser(user);
+        // Access token is already stored in memory by authAPI.register
+        setUser(response.data.user);
+        setIsAuthenticated(true);
         return { success: true, message: response.data.message };
       }
     } catch (error) {
@@ -95,11 +83,29 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Logout function
-  const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setUser(null);
-    delete axios.defaults.headers.common['Authorization'];
+  const logout = async () => {
+    try {
+      await authAPI.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
+      clearAccessToken(); // Clear from memory
+    }
+  };
+
+  // Logout from all devices
+  const logoutAll = async () => {
+    try {
+      await authAPI.logoutAll();
+    } catch (error) {
+      console.error('Logout all error:', error);
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
+      clearAccessToken();
+    }
   };
 
   // Check if user is admin
@@ -107,14 +113,36 @@ export const AuthProvider = ({ children }) => {
     return user?.role === 'admin';
   };
 
+  // Update password
+  const updatePassword = async (currentPassword, newPassword) => {
+    try {
+      const response = await authAPI.updatePassword(currentPassword, newPassword);
+      
+      if (response.data.success) {
+        // New access token is automatically set by the response
+        setAccessToken(response.data.accessToken);
+        return { success: true, message: response.data.message };
+      }
+    } catch (error) {
+      console.error('Update password error:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to update password.',
+      };
+    }
+  };
+
   const value = {
     user,
-    token,
     loading,
+    isAuthenticated,
     login,
     register,
     logout,
+    logoutAll,
     isAdmin,
+    updatePassword,
+    loadUser, // Expose for manual refresh if needed
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

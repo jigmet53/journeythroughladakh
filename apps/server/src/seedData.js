@@ -304,8 +304,8 @@ const sightseeing = [
     bestTimeToVisit: "May to September",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800",
-        alt: "Pangong Lake"
+        url: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800&q=80",
+        alt: "Pangong Lake Ladakh"
       }
     ],
     featured: true,
@@ -325,8 +325,8 @@ const sightseeing = [
     bestTimeToVisit: "Early morning for prayers",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1588595130235-83516dfc14e7?w=800",
-        alt: "Thiksey Monastery"
+        url: "https://images.unsplash.com/photo-1626621341229-c228bcb6e050?w=800&q=80",
+        alt: "Thiksey Monastery Ladakh"
       }
     ],
     featured: true,
@@ -346,8 +346,8 @@ const sightseeing = [
     bestTimeToVisit: "June to September",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1592894937629-e6c7b9f2f496?w=800",
-        alt: "Khardung La Pass"
+        url: "https://images.unsplash.com/photo-1568454537842-d933259bb258?w=800&q=80",
+        alt: "Khardung La Pass Ladakh"
       }
     ],
     featured: true,
@@ -388,8 +388,8 @@ const sightseeing = [
     bestTimeToVisit: "June to September",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1610878722345-79c5ebc0c7eb?w=800",
-        alt: "Nubra Valley"
+        url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+        alt: "Nubra Valley Ladakh"
       }
     ],
     featured: true,

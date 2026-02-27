@@ -111,9 +111,9 @@ function Home() {
               <div key={tour._id} className="tour-card">
                 <div className="card-image-wrapper">
                   <img 
-                    src={tour.images && tour.images[0] ? tour.images[0].url : 'https://images.unsplash.com/photo-1591825729269-caeb344f6df2?w=800&q=80'} 
+                    src={tour.images && tour.images[0] ? tour.images[0].url : 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80'} 
                     alt={tour.images && tour.images[0] ? tour.images[0].alt || tour.title : tour.title}
-                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1591825729269-caeb344f6df2?w=800&q=80' }}
+                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80' }}
                   />
                   <div className="card-badge">Featured</div>
                 </div>
@@ -170,9 +170,9 @@ function Home() {
               <div key={rental._id} className="rental-card">
                 <div className="card-image-wrapper">
                   <img 
-                    src={rental.images && rental.images[0] ? rental.images[0].url : (rental.type === 'bike' ? 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=800&q=80' : 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80')}
+                    src={rental.images && rental.images[0] ? rental.images[0].url : (rental.type === 'bike' ? 'https://images.unsplash.com/photo-1568454537842-d933259bb258?w=800&q=80' : 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&q=80')}
                     alt={rental.images && rental.images[0] ? rental.images[0].alt || rental.name : rental.name}
-                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80' }}
+                    onError={(e) => { e.target.src = rental.type === 'bike' ? 'https://images.unsplash.com/photo-1568454537842-d933259bb258?w=800&q=80' : 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&q=80' }}
                   />
                   <div className={`card-badge ${rental.available ? 'available' : 'unavailable'}`}>
                     {rental.available ? '✓ Available' : 'Unavailable'}
