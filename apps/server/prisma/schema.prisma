@@ -1,0 +1,189 @@
+// Journey Through Ladakh 2.0 — MVP schema (BRD.md §42, trimmed to MVP scope)
+// Phase 2 tables (hotels, restaurants, routes, weather, road, permits) are
+// intentionally not modeled yet — see BRD.md §84 and the rewrite plan.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  EDITOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum ItineraryVisibility {
+  PRIVATE
+  UNLISTED
+  PUBLIC
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  refreshTokens RefreshToken[]
+  itineraries   Itinerary[]
+  savedItems    SavedItem[]
+
+  @@map("users")
+}
+
+/// Rotate-on-use refresh tokens with DB-tracked revocation, ported from the
+/// previous Express/Mongoose implementation (see the M0 commit for the source).
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revoked   Boolean  @default(false)
+  expiresAt DateTime @map("expires_at")
+  userAgent String?  @map("user_agent")
+  ip        String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model DestinationCategory {
+  id           String        @id @default(uuid())
+  name         String        @unique
+  slug         String        @unique
+  destinations Destination[]
+
+  @@map("destination_categories")
+}
+
+model Destination {
+  id              String   @id @default(uuid())
+  slug            String   @unique
+  name            String
+  summary         String
+  overview        String
+  bestTime        String?  @map("best_time")
+  howToReach      String?  @map("how_to_reach")
+  distanceFromLeh Int?     @map("distance_from_leh_km")
+  altitudeMeters  Int?     @map("altitude_meters")
+  latitude        Float?
+  longitude       Float?
+  heroImageUrl    String?  @map("hero_image_url")
+  status          String   @default("published")
+  categoryId      String?  @map("category_id")
+  category        DestinationCategory? @relation(fields: [categoryId], references: [id])
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  itineraryItems ItineraryItem[]
+  savedItems     SavedItem[]
+  documents      Document[]
+
+  @@map("destinations")
+}
+
+model Itinerary {
+  id           String              @id @default(uuid())
+  userId       String              @map("user_id")
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String
+  startingCity String?             @map("starting_city")
+  startDate    DateTime?           @map("start_date")
+  days         Int
+  budget       String?
+  travelStyle  String?             @map("travel_style")
+  visibility   ItineraryVisibility @default(PRIVATE)
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @updatedAt @map("updated_at")
+
+  itineraryDays ItineraryDay[]
+
+  @@map("itineraries")
+}
+
+model ItineraryDay {
+  id          String    @id @default(uuid())
+  itineraryId String    @map("itinerary_id")
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  dayNumber   Int       @map("day_number")
+  title       String?
+  notes       String?
+
+  items ItineraryItem[]
+
+  @@unique([itineraryId, dayNumber])
+  @@map("itinerary_days")
+}
+
+model ItineraryItem {
+  id             String       @id @default(uuid())
+  itineraryDayId String       @map("itinerary_day_id")
+  itineraryDay   ItineraryDay @relation(fields: [itineraryDayId], references: [id], onDelete: Cascade)
+  destinationId  String?      @map("destination_id")
+  destination    Destination? @relation(fields: [destinationId], references: [id])
+  order          Int
+  activity       String?
+  notes          String?
+
+  @@map("itinerary_items")
+}
+
+model SavedItem {
+  id            String      @id @default(uuid())
+  userId        String      @map("user_id")
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  destinationId String      @map("destination_id")
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  @@unique([userId, destinationId])
+  @@map("saved_items")
+}
+
+/// RAG knowledge source documents (BRD §21). Seeded from destination content;
+/// chunked and embedded into `embeddings` by the ingestion job (M5).
+model Document {
+  id            String       @id @default(uuid())
+  destinationId String?      @map("destination_id")
+  destination   Destination? @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  source        String
+  category      String
+  title         String
+  content       String
+  language      String       @default("en")
+  trustLevel    String       @default("verified") @map("trust_level")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  embeddings Embedding[]
+
+  @@map("documents")
+}
+
+/// pgvector column: Prisma treats `vector` as Unsupported (it has no native
+/// pgvector type), so this field is excluded from the generated Client and
+/// must be read/written with raw SQL ($queryRaw/$executeRaw) in RAGModule.
+/// The `vector` extension and an HNSW index on this column are created by a
+/// manual SQL migration once a real Postgres instance is available (see
+/// apps/server/README.md).
+model Embedding {
+  id         String   @id @default(uuid())
+  documentId String   @map("document_id")
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  chunkIndex Int      @map("chunk_index")
+  chunkText  String   @map("chunk_text")
+  vector     Unsupported("vector(1024)")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("embeddings")
+}
