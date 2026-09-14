@@ -106,15 +106,21 @@ api.interceptors.response.use(
         return api(originalRequest);
         
       } catch (refreshError) {
-        // Refresh failed - clear token and redirect to login
+        // Refresh failed - clear token
         processQueue(refreshError, null);
         clearAccessToken();
-        
-        // Only redirect if not already on login page
-        if (!window.location.pathname.includes('/login')) {
+
+        // Don't force-redirect for the passive "am I logged in?" check that
+        // runs on every page load (AuthContext's loadUser) - a guest visitor
+        // getting a 401 there is expected, not a reason to bounce them off
+        // the page they're trying to view. Only redirect when a genuinely
+        // protected action (not just the silent session check) fails.
+        const isPassiveSessionCheck = originalRequest.url?.includes('/auth/me');
+
+        if (!isPassiveSessionCheck && !window.location.pathname.includes('/login')) {
           window.location.href = '/login';
         }
-        
+
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
