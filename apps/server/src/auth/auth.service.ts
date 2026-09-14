@@ -198,4 +198,23 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('User not found');
     return this.toPublicUser(user);
   }
+
+  /** Revokes every existing session — matches the old server's behavior of
+   * forcing re-login everywhere after a password change. */
+  async updatePassword(userId: string, currentPassword: string, newPassword: string, device: DeviceInfo) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const matches = await bcrypt.compare(currentPassword, user.password);
+    if (!matches) throw new UnauthorizedException('Current password is incorrect');
+
+    const hashed = await bcrypt.hash(newPassword, 12);
+    await this.prisma.user.update({ where: { id: userId }, data: { password: hashed } });
+
+    await this.revokeAllUserTokens(userId);
+    await this.redis.deleteSession(userId);
+
+    const tokens = await this.issueTokenPair(user.id, user.role, device);
+    return tokens;
+  }
 }

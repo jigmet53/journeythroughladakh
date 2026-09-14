@@ -1,8 +1,9 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Get, Patch, Req, Res, UseGuards } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { LoginThrottleGuard } from './guards/login-throttle.guard';
@@ -82,5 +83,26 @@ export class AuthController {
     await this.authService.logoutAll(user.id);
     res.clearCookie(REFRESH_COOKIE);
     return { success: true, message: 'Logged out from all devices successfully' };
+  }
+
+  @Patch('update-password')
+  async updatePassword(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdatePasswordDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken, refreshToken } = await this.authService.updatePassword(
+      user.id,
+      dto.currentPassword,
+      dto.newPassword,
+      this.deviceInfo(req),
+    );
+    this.setRefreshCookie(res, refreshToken);
+    return {
+      success: true,
+      message: 'Password updated successfully. You have been logged out from all other devices.',
+      accessToken,
+    };
   }
 }
