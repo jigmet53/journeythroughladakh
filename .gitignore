@@ -46,6 +46,8 @@ out/
 .next/
 .nuxt/
 .cache/
+.vite/
+*.tsbuildinfo
 
 # Testing
 coverage/
