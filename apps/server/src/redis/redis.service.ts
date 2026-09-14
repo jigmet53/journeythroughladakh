@@ -162,6 +162,16 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  async deleteCacheByPattern(pattern: string): Promise<void> {
+    if (!this.isReady()) return;
+    try {
+      const keys = await this.client!.keys(pattern);
+      if (keys.length > 0) await this.client!.del(...keys);
+    } catch (err) {
+      this.logger.error(`deleteCacheByPattern failed: ${(err as Error).message}`);
+    }
+  }
+
   async ping(): Promise<boolean> {
     if (!this.isReady()) return false;
     try {

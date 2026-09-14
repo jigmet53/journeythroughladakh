@@ -1,3 +1,8 @@
+-- Required for the `embeddings.vector` column (RAG, M5). Included here so a
+-- fresh migration replay (CI, a new dev machine, Prisma's shadow database)
+-- enables it before any table that depends on it is created.
+CREATE EXTENSION IF NOT EXISTS vector;
+
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('USER', 'EDITOR', 'ADMIN', 'SUPER_ADMIN');
 
