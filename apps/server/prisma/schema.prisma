@@ -86,9 +86,10 @@ model Destination {
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
-  itineraryItems ItineraryItem[]
-  savedItems     SavedItem[]
-  documents      Document[]
+  itineraryItems  ItineraryItem[]
+  savedItems      SavedItem[]
+  documents       Document[]
+  packageDayStops TripPackageDay[]
 
   @@map("destinations")
 }
@@ -186,4 +187,53 @@ model Embedding {
   createdAt  DateTime @default(now()) @map("created_at")
 
   @@map("embeddings")
+}
+
+/// Hand-picked, editorially-curated multi-day routes — distinct from the
+/// user-generated Itinerary (M4's deterministic planner output). No
+/// inclusions/exclusions/price-as-a-sale-price fields: this app has no
+/// booking system (BRD.md §85 — "Booking integrations" is explicitly
+/// Phase 3), so a package reads as a route guide to follow yourself, not
+/// something purchased here. `estimatedBudget` is informational only.
+model TripPackage {
+  id               String   @id @default(uuid())
+  slug             String   @unique
+  title            String
+  tagline          String
+  summary          String
+  days             Int
+  nights           Int
+  difficulty       String
+  bestFor          String[] @map("best_for")
+  bestTime         String   @map("best_time")
+  startCity        String   @map("start_city")
+  estimatedBudget  String?  @map("estimated_budget")
+  highlights       String[]
+  thingsToKnow     String[] @map("things_to_know")
+  heroImageUrl     String?  @map("hero_image_url")
+  status           String   @default("published")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  days_ TripPackageDay[]
+
+  @@map("trip_packages")
+}
+
+model TripPackageDay {
+  id            String       @id @default(uuid())
+  packageId     String       @map("package_id")
+  package       TripPackage  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  dayNumber     Int          @map("day_number")
+  title         String
+  description   String
+  overnightAt   String?      @map("overnight_at")
+  distanceKm    Int?         @map("distance_km")
+  driveHours    Float?       @map("drive_hours")
+  altitudeMeters Int?        @map("altitude_meters")
+  destinationId String?      @map("destination_id")
+  destination   Destination? @relation(fields: [destinationId], references: [id])
+
+  @@unique([packageId, dayNumber])
+  @@map("trip_package_days")
 }

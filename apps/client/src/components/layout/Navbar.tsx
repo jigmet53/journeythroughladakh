@@ -4,6 +4,7 @@ import { useAuthStore } from '../../stores/auth.store';
 
 const navLinks = [
   { to: '/places', label: 'Explore' },
+  { to: '/packages', label: 'Packages' },
   { to: '/planner', label: 'Plan a Trip' },
   { to: '/ai', label: 'Ask AI' },
 ];

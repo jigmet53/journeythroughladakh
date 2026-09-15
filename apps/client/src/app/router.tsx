@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import { HomePage } from '../pages/home/HomePage';
 import { PlacesPage } from '../pages/places/PlacesPage';
 import { DestinationDetailPage } from '../pages/places/DestinationDetailPage';
+import { PackagesPage } from '../pages/packages/PackagesPage';
+import { PackageDetailPage } from '../pages/packages/PackageDetailPage';
 import { PlannerPage } from '../pages/planner/PlannerPage';
 import { ItineraryDetailPage } from '../pages/itinerary/ItineraryDetailPage';
 import { AiPage } from '../pages/ai/AiPage';
@@ -16,6 +18,8 @@ export function AppRouter() {
       <Route path="/" element={<HomePage />} />
       <Route path="/places" element={<PlacesPage />} />
       <Route path="/places/:slug" element={<DestinationDetailPage />} />
+      <Route path="/packages" element={<PackagesPage />} />
+      <Route path="/packages/:slug" element={<PackageDetailPage />} />
       <Route path="/planner" element={<PlannerPage />} />
       <Route path="/itineraries/:id" element={<ItineraryDetailPage />} />
       <Route path="/ai" element={<AiPage />} />

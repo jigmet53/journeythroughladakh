@@ -2,12 +2,18 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { destinationsApi } from '../../services/destinations.api';
+import { packagesApi } from '../../services/packages.api';
 import { DestinationCard } from '../../components/places/DestinationCard';
+import { PackageCard } from '../../components/packages/PackageCard';
 
 export function HomePage() {
   const { data, isLoading } = useQuery({
     queryKey: ['destinations', 'home'],
     queryFn: () => destinationsApi.list({ limit: 6 }),
+  });
+  const { data: packages, isLoading: packagesLoading } = useQuery({
+    queryKey: ['packages', 'home'],
+    queryFn: () => packagesApi.list(),
   });
 
   return (
@@ -81,6 +87,27 @@ export function HomePage() {
                 destination={{ ...destination, categoryName: destination.category?.name }}
               />
             ))}
+          </div>
+        )}
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+        <div className="mb-8 flex items-end justify-between">
+          <h2 className="text-2xl font-semibold text-stone">Hand-picked trip packages</h2>
+          <Link to="/packages" className="text-sm font-medium text-accent hover:underline">
+            View all
+          </Link>
+        </div>
+
+        {packagesLoading ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-64 animate-pulse rounded-xl bg-sand/30" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {packages?.slice(0, 3).map((pkg) => <PackageCard key={pkg.id} pkg={pkg} />)}
           </div>
         )}
       </section>

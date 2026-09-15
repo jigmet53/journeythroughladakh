@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { DestinationsModule } from './destinations/destinations.module';
 import { SearchModule } from './search/search.module';
 import { ItineraryModule } from './itinerary/itinerary.module';
+import { PackagesModule } from './packages/packages.module';
 import { RagModule } from './rag/rag.module';
 import { AiModule } from './ai/ai.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
@@ -25,6 +26,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     DestinationsModule,
     SearchModule,
     ItineraryModule,
+    PackagesModule,
     RagModule,
     AiModule,
   ],

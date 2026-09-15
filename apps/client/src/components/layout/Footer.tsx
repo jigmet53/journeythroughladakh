@@ -16,6 +16,9 @@ export function Footer() {
             <Link to="/places" className="hover:text-snow">
               Explore
             </Link>
+            <Link to="/packages" className="hover:text-snow">
+              Packages
+            </Link>
             <Link to="/planner" className="hover:text-snow">
               Plan a Trip
             </Link>

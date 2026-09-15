@@ -103,3 +103,39 @@ export interface PlannerInput {
   interests?: string[];
   fitnessLevel?: 'easy' | 'moderate' | 'strenuous';
 }
+
+export interface TripPackageDay {
+  id: string;
+  dayNumber: number;
+  title: string;
+  description: string;
+  overnightAt: string | null;
+  distanceKm: number | null;
+  driveHours: number | null;
+  altitudeMeters: number | null;
+  destinationId: string | null;
+  destination: Destination | null;
+}
+
+export interface TripPackage {
+  id: string;
+  slug: string;
+  title: string;
+  tagline: string;
+  summary: string;
+  days: number;
+  nights: number;
+  difficulty: string;
+  bestFor: string[];
+  bestTime: string;
+  startCity: string;
+  estimatedBudget: string | null;
+  highlights: string[];
+  thingsToKnow: string[];
+  heroImageUrl: string | null;
+  status: string;
+}
+
+export interface TripPackageDetail extends TripPackage {
+  itinerary: TripPackageDay[];
+}
