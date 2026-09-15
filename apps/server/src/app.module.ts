@@ -9,6 +9,8 @@ import { UsersModule } from './users/users.module';
 import { DestinationsModule } from './destinations/destinations.module';
 import { SearchModule } from './search/search.module';
 import { ItineraryModule } from './itinerary/itinerary.module';
+import { RagModule } from './rag/rag.module';
+import { AiModule } from './ai/ai.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -23,6 +25,8 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     DestinationsModule,
     SearchModule,
     ItineraryModule,
+    RagModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [

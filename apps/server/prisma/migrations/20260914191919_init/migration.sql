@@ -139,7 +139,7 @@ CREATE TABLE "embeddings" (
     "document_id" TEXT NOT NULL,
     "chunk_index" INTEGER NOT NULL,
     "chunk_text" TEXT NOT NULL,
-    "vector" vector(1024) NOT NULL,
+    "vector" vector(768) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "embeddings_pkey" PRIMARY KEY ("id")

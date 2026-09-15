@@ -173,16 +173,16 @@ model Document {
 /// pgvector column: Prisma treats `vector` as Unsupported (it has no native
 /// pgvector type), so this field is excluded from the generated Client and
 /// must be read/written with raw SQL ($queryRaw/$executeRaw) in RAGModule.
-/// The `vector` extension and an HNSW index on this column are created by a
-/// manual SQL migration once a real Postgres instance is available (see
-/// apps/server/README.md).
+/// 768 dimensions matches Gemini's gemini-embedding-001 model with
+/// outputDimensionality: 768 (its default is 3072; 768 is one of Google's
+/// documented reduced-size options — keeps the column/index smaller).
 model Embedding {
   id         String   @id @default(uuid())
   documentId String   @map("document_id")
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
   chunkIndex Int      @map("chunk_index")
   chunkText  String   @map("chunk_text")
-  vector     Unsupported("vector(1024)")
+  vector     Unsupported("vector(768)")
   createdAt  DateTime @default(now()) @map("created_at")
 
   @@map("embeddings")
