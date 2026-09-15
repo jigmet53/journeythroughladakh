@@ -58,3 +58,48 @@ export interface SearchResponse {
   query: string;
   results: SearchResult[];
 }
+
+export type ItineraryVisibility = 'PRIVATE' | 'UNLISTED' | 'PUBLIC';
+
+export interface ItineraryItem {
+  id?: string;
+  destinationId?: string | null;
+  destination?: Destination | null;
+  order: number;
+  activity?: string | null;
+  notes?: string | null;
+}
+
+export interface ItineraryDay {
+  id?: string;
+  dayNumber: number;
+  title?: string | null;
+  notes?: string | null;
+  items: ItineraryItem[];
+}
+
+export interface ItineraryDraft {
+  startingCity: string | null;
+  days: number;
+  budget: string | null;
+  travelStyle: string | null;
+  itineraryDays: ItineraryDay[];
+}
+
+export interface Itinerary extends ItineraryDraft {
+  id: string;
+  userId: string;
+  title: string;
+  visibility: ItineraryVisibility;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PlannerInput {
+  startingCity?: string;
+  days: number;
+  budget?: string;
+  travelStyle?: string;
+  interests?: string[];
+  fitnessLevel?: 'easy' | 'moderate' | 'strenuous';
+}
