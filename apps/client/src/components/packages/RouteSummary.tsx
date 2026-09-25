@@ -11,15 +11,17 @@ export function RouteSummary({ days }: { days: TripPackageDay[] }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-stone/10 bg-sand/10 p-4">
+    <ol className="flex flex-wrap items-center gap-2 rounded-2xl bg-night p-5">
       {stops.map((stop, i) => (
-        <div key={i} className="flex items-center gap-2">
-          <span className="rounded-full bg-white px-3 py-1.5 text-sm font-medium text-stone shadow-sm">
-            {stop}
-          </span>
-          {i < stops.length - 1 && <span className="text-stone/30">→</span>}
-        </div>
+        <li key={i} className="flex items-center gap-2">
+          <span className="rounded-full border border-snow/20 bg-snow/5 px-4 py-1.5 text-sm font-medium text-snow">{stop}</span>
+          {i < stops.length - 1 && (
+            <span aria-hidden="true" className="text-ember">
+              →
+            </span>
+          )}
+        </li>
       ))}
-    </div>
+    </ol>
   );
 }

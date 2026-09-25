@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
+import { MotionConfig } from 'framer-motion';
 import { useAuthStore } from '../stores/auth.store';
 
 const queryClient = new QueryClient({
@@ -21,7 +22,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   return (
     <HelmetProvider>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      </QueryClientProvider>
     </HelmetProvider>
   );
 }

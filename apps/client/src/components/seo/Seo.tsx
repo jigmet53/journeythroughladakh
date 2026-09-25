@@ -16,7 +16,10 @@ const SITE_NAME = 'Journey Through Ladakh';
  * way. Canonical/OG URLs use the current origin at runtime rather than a
  * hardcoded domain — correct wherever this is actually deployed. */
 export function Seo({ title, description, path, image, jsonLd }: SeoProps) {
-  const url = typeof window !== 'undefined' ? `${window.location.origin}${path}` : path;
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const url = `${origin}${path}`;
+  // Open Graph crawlers need an absolute image URL; catalog photos are root-relative.
+  const absoluteImage = image?.startsWith('/') ? `${origin}${image}` : image;
   const fullTitle = `${title} | ${SITE_NAME}`;
   const jsonLdList = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
@@ -31,12 +34,12 @@ export function Seo({ title, description, path, image, jsonLd }: SeoProps) {
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
-      {image && <meta property="og:image" content={image} />}
+      {absoluteImage && <meta property="og:image" content={absoluteImage} />}
 
-      <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+      <meta name="twitter:card" content={absoluteImage ? 'summary_large_image' : 'summary'} />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
-      {image && <meta name="twitter:image" content={image} />}
+      {absoluteImage && <meta name="twitter:image" content={absoluteImage} />}
 
       {jsonLdList.map((data, i) => (
         <script key={i} type="application/ld+json">

@@ -4,10 +4,12 @@ import { AppRouter } from './app/router';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { ErrorBoundary } from './components/layout/ErrorBoundary';
+import { ScrollToTop } from './components/layout/ScrollToTop';
 
 export function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppProviders>
         <div className="flex min-h-screen flex-col">
           <Navbar />

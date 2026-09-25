@@ -139,3 +139,35 @@ export interface TripPackage {
 export interface TripPackageDetail extends TripPackage {
   itinerary: TripPackageDay[];
 }
+
+export type BookingStatus = 'new' | 'contacted' | 'confirmed' | 'cancelled';
+
+export interface BookingRequest {
+  id: string;
+  reference: string;
+  packageId: string | null;
+  packageSlug: string;
+  packageTitle: string;
+  name: string;
+  email: string;
+  phone: string;
+  adults: number;
+  children: number;
+  /** ISO timestamp of a calendar date (midnight UTC). */
+  startDate: string;
+  flexibleDates: boolean;
+  startingCity: string | null;
+  notes: string | null;
+  status: BookingStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  topic: string;
+  message: string;
+  createdAt: string;
+}

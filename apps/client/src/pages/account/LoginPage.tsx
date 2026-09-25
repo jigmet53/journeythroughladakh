@@ -4,6 +4,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuthStore } from '../../stores/auth.store';
+import { AuthLayout } from '../../components/layout/AuthLayout';
+import { Field, FormError, PasswordInput, inputClass, primaryButton } from '../../components/ui/forms';
+import { Seo } from '../../components/seo/Seo';
 
 const schema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -36,48 +39,53 @@ export function LoginPage() {
   };
 
   return (
-    <div className="mx-auto flex max-w-md flex-col px-4 py-16 sm:px-6">
-      <h1 className="font-display text-2xl font-semibold text-stone">Log in</h1>
-      <p className="mt-1 text-sm text-stone/60">Access your saved places and trips.</p>
-
-      <form className="mt-8 flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)} noValidate>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-stone">Email</label>
+    <AuthLayout
+      photo="hero-sunset-indus"
+      panelTitle={
+        <>
+          Pick up where you left <em>off.</em>
+        </>
+      }
+      panelText="Your saved itineraries are waiting — edit a day, share a route or start a new one."
+      title="Welcome back"
+      subtitle="Log in to see your saved trips."
+    >
+      <Seo title="Log in" description="Log in to your Journey Through Ladakh account." path="/login" />
+      <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Field label="Email" htmlFor="email" error={errors.email?.message}>
           <input
+            id="email"
             type="email"
+            autoComplete="email"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? 'email-error' : undefined}
             {...register('email')}
-            className="w-full rounded-lg border border-stone/20 px-3 py-2 text-sm focus:border-accent focus:outline-none"
+            className={inputClass}
           />
-          {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
-        </div>
-
-        <div>
-          <label className="mb-1 block text-sm font-medium text-stone">Password</label>
-          <input
-            type="password"
+        </Field>
+        <Field label="Password" htmlFor="password" error={errors.password?.message}>
+          <PasswordInput
+            id="password"
+            autoComplete="current-password"
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? 'password-error' : undefined}
             {...register('password')}
-            className="w-full rounded-lg border border-stone/20 px-3 py-2 text-sm focus:border-accent focus:outline-none"
           />
-          {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>}
-        </div>
+        </Field>
 
-        {serverError && <p className="text-sm text-red-600">{serverError}</p>}
+        {serverError && <FormError>{serverError}</FormError>}
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="mt-2 rounded-full bg-stone px-6 py-2.5 text-sm font-medium text-snow hover:bg-accent disabled:opacity-60"
-        >
+        <button type="submit" disabled={isSubmitting} className={`${primaryButton} w-full py-3.5`}>
           {isSubmitting ? 'Logging in…' : 'Log in'}
         </button>
       </form>
 
-      <p className="mt-6 text-sm text-stone/60">
+      <p className="mt-6 text-center text-sm text-stone/60">
         Don't have an account?{' '}
-        <Link to="/register" className="text-accent hover:underline">
+        <Link to="/register" className="font-medium text-accent hover:underline">
           Register
         </Link>
       </p>
-    </div>
+    </AuthLayout>
   );
 }

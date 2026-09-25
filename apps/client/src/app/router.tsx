@@ -10,6 +10,15 @@ import { AiPage } from '../pages/ai/AiPage';
 import { LoginPage } from '../pages/account/LoginPage';
 import { RegisterPage } from '../pages/account/RegisterPage';
 import { TripsPage } from '../pages/account/TripsPage';
+import { CreditsPage } from '../pages/about/CreditsPage';
+import { AboutPage } from '../pages/about/AboutPage';
+import { ContactPage } from '../pages/contact/ContactPage';
+import { FaqPage } from '../pages/faq/FaqPage';
+import { GuidePage } from '../pages/guide/GuidePage';
+import { PrivacyPage } from '../pages/legal/PrivacyPage';
+import { TermsPage } from '../pages/legal/TermsPage';
+import { InboxPage } from '../pages/admin/InboxPage';
+import { NotFoundPage } from '../pages/system/NotFoundPage';
 import { ProtectedRoute } from '../components/layout/ProtectedRoute';
 
 export function AppRouter() {
@@ -25,6 +34,21 @@ export function AppRouter() {
       <Route path="/ai" element={<AiPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/credits" element={<CreditsPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/faq" element={<FaqPage />} />
+      <Route path="/guide" element={<GuidePage />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route
+        path="/admin/inbox"
+        element={
+          <ProtectedRoute>
+            <InboxPage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/account/trips"
         element={
@@ -33,6 +57,7 @@ export function AppRouter() {
           </ProtectedRoute>
         }
       />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

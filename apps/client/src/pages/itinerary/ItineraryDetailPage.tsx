@@ -1,9 +1,14 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { itineraryApi } from '../../services/itinerary.api';
 import { useAuthStore } from '../../stores/auth.store';
 import { ItineraryDaysEditor } from '../../components/itinerary/ItineraryDaysEditor';
+import { ItineraryDaysView } from '../../components/itinerary/ItineraryDaysView';
+import { PageHero } from '../../components/ui/PageHero';
+import { dangerButton, emberButton, ghostButton, inputClass } from '../../components/ui/forms';
+import { Seo } from '../../components/seo/Seo';
+import { tripCover } from '../../data/imagery';
 import type { ItineraryDay, ItineraryVisibility } from '../../types/api';
 
 const VISIBILITY_LABELS: Record<ItineraryVisibility, string> = {
@@ -36,13 +41,24 @@ export function ItineraryDetailPage() {
   const [copySuccess, setCopySuccess] = useState(false);
 
   if (authLoading || isLoading) {
-    return <div className="mx-auto max-w-3xl px-4 py-16 text-stone/60">Loading…</div>;
+    return (
+      <div aria-busy="true" aria-label="Loading itinerary">
+        <div className="h-[15rem] animate-pulse bg-sand/40 sm:h-[18rem]" />
+        <div className="mx-auto max-w-3xl space-y-4 px-4 py-10 sm:px-6">
+          <div className="h-24 animate-pulse rounded-2xl bg-sand/30" />
+          <div className="h-24 animate-pulse rounded-2xl bg-sand/30" />
+        </div>
+      </div>
+    );
   }
   if (isError || !itinerary) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-16 text-center">
-        <h1 className="font-display text-2xl font-semibold text-stone">Itinerary not found</h1>
+      <div className="mx-auto max-w-3xl px-4 py-24 text-center">
+        <h1 className="font-display text-3xl font-medium text-stone">Itinerary not found</h1>
         <p className="mt-2 text-stone/60">It may be private, or the link may be wrong.</p>
+        <Link to="/planner" className={`${emberButton} mt-6 inline-block`}>
+          Plan a new trip
+        </Link>
       </div>
     );
   }
@@ -97,104 +113,83 @@ export function ItineraryDetailPage() {
     setTimeout(() => setCopySuccess(false), 2000);
   };
 
+  const facts = [
+    `${itinerary.days} ${itinerary.days === 1 ? 'day' : 'days'}`,
+    itinerary.startingCity && `From ${itinerary.startingCity}`,
+    itinerary.travelStyle,
+    itinerary.budget,
+  ].filter(Boolean) as string[];
+
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="font-display text-3xl font-semibold text-stone">{itinerary.title}</h1>
-          <p className="mt-1 text-sm text-stone/60">
-            {itinerary.days} days
-            {itinerary.startingCity ? ` · from ${itinerary.startingCity}` : ''}
-            {itinerary.travelStyle ? ` · ${itinerary.travelStyle}` : ''}
-          </p>
-        </div>
+    <div>
+      <Seo title={itinerary.title} description={`A ${itinerary.days}-day Ladakh itinerary.`} path={`/itineraries/${itinerary.id}`} />
+      <PageHero photo={tripCover(itinerary.id)} eyebrow="Itinerary" title={itinerary.title} overlap={isOwner}>
+        <ul className="mt-4 flex flex-wrap gap-2">
+          {facts.map((f) => (
+            <li key={f} className="rounded-full border border-snow/25 bg-night/40 px-3 py-1 text-xs font-medium text-snow backdrop-blur-sm">
+              {f}
+            </li>
+          ))}
+        </ul>
+      </PageHero>
 
+      <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
         {isOwner && (
-          <div className="flex flex-wrap gap-2">
+          <div className="relative z-10 -mt-12 flex flex-col gap-4 rounded-2xl border border-stone/10 bg-white p-5 shadow-xl sm:flex-row sm:items-center sm:justify-between">
             {editing ? (
-              <>
-                <button
-                  onClick={saveEdits}
-                  disabled={isSaving}
-                  className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-snow disabled:opacity-60"
-                >
-                  {isSaving ? 'Saving…' : 'Save changes'}
-                </button>
-                <button
-                  onClick={cancelEditing}
-                  className="rounded-full border border-stone/20 px-4 py-2 text-sm text-stone/70"
-                >
-                  Cancel
-                </button>
-              </>
+              <p className="text-sm text-stone/60">Editing — reorder days, add notes or places, then save.</p>
             ) : (
-              <>
-                <button
-                  onClick={startEditing}
-                  className="rounded-full border border-stone/20 px-4 py-2 text-sm text-stone hover:border-accent hover:text-accent"
+              <div className="flex flex-wrap items-center gap-3 text-sm">
+                <label htmlFor="visibility" className="font-medium text-stone">
+                  Sharing
+                </label>
+                <select
+                  id="visibility"
+                  value={itinerary.visibility}
+                  onChange={(e) => changeVisibility(e.target.value as ItineraryVisibility)}
+                  className={`${inputClass} w-auto py-2`}
                 >
-                  Edit
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="rounded-full border border-red-200 px-4 py-2 text-sm text-red-600"
-                >
-                  Delete
-                </button>
-              </>
-            )}
-          </div>
-        )}
-      </div>
-
-      {isOwner && !editing && (
-        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-lg bg-sand/10 p-3 text-sm">
-          <label className="text-stone/60">Sharing:</label>
-          <select
-            value={itinerary.visibility}
-            onChange={(e) => changeVisibility(e.target.value as ItineraryVisibility)}
-            className="rounded-md border border-stone/20 px-2 py-1"
-          >
-            {Object.entries(VISIBILITY_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-          {itinerary.visibility !== 'PRIVATE' && (
-            <button onClick={copyShareLink} className="text-accent hover:underline">
-              {copySuccess ? 'Link copied!' : 'Copy share link'}
-            </button>
-          )}
-        </div>
-      )}
-
-      <div className="mt-8">
-        {editing ? (
-          <ItineraryDaysEditor days={days} onChange={setDraftDays} />
-        ) : (
-          <div className="flex flex-col gap-4">
-            {days.map((day) => (
-              <div key={day.dayNumber} className="rounded-xl border border-stone/10 bg-white p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-accent">
-                  Day {day.dayNumber}
-                </p>
-                {day.title && <h3 className="font-display text-lg font-semibold text-stone">{day.title}</h3>}
-                {day.notes && <p className="mt-1 text-sm text-stone/60">{day.notes}</p>}
-                {day.items.length > 0 && (
-                  <ul className="mt-3 flex flex-col gap-2">
-                    {day.items.map((item, i) => (
-                      <li key={i} className="rounded-lg bg-sand/10 p-3 text-sm">
-                        <p className="font-medium text-stone">{item.activity}</p>
-                        {item.notes && <p className="mt-0.5 text-stone/60">{item.notes}</p>}
-                      </li>
-                    ))}
-                  </ul>
+                  {Object.entries(VISIBILITY_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+                {itinerary.visibility !== 'PRIVATE' && (
+                  <button onClick={copyShareLink} className="font-medium text-accent hover:underline">
+                    {copySuccess ? 'Link copied!' : 'Copy share link'}
+                  </button>
                 )}
               </div>
-            ))}
+            )}
+
+            <div className="flex flex-wrap gap-2">
+              {editing ? (
+                <>
+                  <button onClick={saveEdits} disabled={isSaving} className={`${emberButton} py-2.5`}>
+                    {isSaving ? 'Saving…' : 'Save changes'}
+                  </button>
+                  <button onClick={cancelEditing} className={ghostButton}>
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button onClick={startEditing} className={ghostButton}>
+                    Edit
+                  </button>
+                  <button onClick={handleDelete} className={dangerButton}>
+                    Delete
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         )}
+
+        <div className={isOwner ? 'mt-10' : 'mt-12'}>
+          {editing ? <ItineraryDaysEditor days={days} onChange={setDraftDays} /> : <ItineraryDaysView days={days} />}
+        </div>
       </div>
     </div>
   );
