@@ -33,7 +33,7 @@ interface PackageInput {
 // Researched against real, commonly-run Ladakh circuits (typical day-by-day
 // structure, road names, altitudes, permit rules) — not fabricated. See the
 // M6 commit message for sources. No prices-as-a-sale-price or inclusions/
-// exclusions fields: this app has no booking system, so these read as route
+// exclusions fields: there is no online payment/booking engine, so these read as route
 // guides to follow yourself, not a package purchased here.
 const packages: PackageInput[] = [
   {

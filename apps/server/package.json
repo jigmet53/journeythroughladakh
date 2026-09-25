@@ -18,6 +18,7 @@
     "prisma:studio": "prisma studio",
     "prisma:seed": "ts-node prisma/seed.ts",
     "prisma:seed-packages": "ts-node prisma/seed-packages.ts",
+    "admin:promote": "ts-node prisma/make-admin.ts",
     "seo:generate": "ts-node src/seo/generate-sitemap.ts",
     "rag:ingest": "ts-node -r tsconfig-paths/register src/rag/ingest.ts"
   },

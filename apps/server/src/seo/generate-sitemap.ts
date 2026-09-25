@@ -12,7 +12,7 @@ import { PrismaClient } from '@prisma/client';
 const SITE_URL = (process.env.SITE_URL ?? 'http://localhost:5173').replace(/\/$/, '');
 const OUT_DIR = resolve(__dirname, '../../../client/public');
 
-const STATIC_PATHS = ['/', '/places', '/packages', '/planner', '/ai'];
+const STATIC_PATHS = ['/', '/places', '/packages', '/planner', '/ai', '/guide', '/faq', '/about', '/contact', '/privacy', '/terms', '/credits'];
 
 const escapeXml = (value: string) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -49,6 +49,7 @@ async function main() {
       'User-agent: *',
       'Allow: /',
       'Disallow: /account',
+      'Disallow: /admin',
       'Disallow: /login',
       'Disallow: /register',
       'Disallow: /itineraries/',

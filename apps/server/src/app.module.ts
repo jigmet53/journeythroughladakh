@@ -12,6 +12,8 @@ import { ItineraryModule } from './itinerary/itinerary.module';
 import { PackagesModule } from './packages/packages.module';
 import { RagModule } from './rag/rag.module';
 import { AiModule } from './ai/ai.module';
+import { ContactModule } from './contact/contact.module';
+import { BookingsModule } from './bookings/bookings.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -29,6 +31,8 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     PackagesModule,
     RagModule,
     AiModule,
+    ContactModule,
+    BookingsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -192,7 +192,7 @@ model Embedding {
 /// Hand-picked, editorially-curated multi-day routes — distinct from the
 /// user-generated Itinerary (M4's deterministic planner output). No
 /// inclusions/exclusions/price-as-a-sale-price fields: this app has no
-/// booking system (BRD.md §85 — "Booking integrations" is explicitly
+/// online payment/booking engine (BRD.md §85 — "Booking integrations" is explicitly
 /// Phase 3), so a package reads as a route guide to follow yourself, not
 /// something purchased here. `estimatedBudget` is informational only.
 model TripPackage {
@@ -215,7 +215,8 @@ model TripPackage {
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
-  days_ TripPackageDay[]
+  days_           TripPackageDay[]
+  bookingRequests BookingRequest[]
 
   @@map("trip_packages")
 }
@@ -236,4 +237,52 @@ model TripPackageDay {
 
   @@unique([packageId, dayNumber])
   @@map("trip_package_days")
+}
+
+/// Messages sent through the public Contact page. They are stored, not
+/// emailed — no mail transport is configured. Staff read them through
+/// GET /api/contact (ADMIN / SUPER_ADMIN). No IP address is kept; abuse is
+/// limited by counting recent rows per sender email and overall.
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  topic     String
+  message   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("contact_messages")
+}
+
+/// A visitor's request to book a trip package. There is no online payment or
+/// instant confirmation: staff read requests through GET /api/bookings
+/// (ADMIN / SUPER_ADMIN), contact the customer and move the status along
+/// (new -> contacted -> confirmed | cancelled). The package title/slug are
+/// copied in so a request stays readable if the package is later changed or
+/// removed (packageId becomes null in that case).
+model BookingRequest {
+  id            String       @id @default(uuid())
+  /// Short code shown to the customer and quoted when staff contact them.
+  reference     String       @unique
+  packageId     String?      @map("package_id")
+  package       TripPackage? @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  packageSlug   String       @map("package_slug")
+  packageTitle  String       @map("package_title")
+  name          String
+  email         String
+  phone         String
+  adults        Int
+  children      Int          @default(0)
+  startDate     DateTime     @map("start_date") @db.Date
+  flexibleDates Boolean      @default(false) @map("flexible_dates")
+  startingCity  String?      @map("starting_city")
+  notes         String?
+  status        String       @default("new")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  @@index([createdAt])
+  @@index([status])
+  @@map("booking_requests")
 }
