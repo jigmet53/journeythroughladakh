@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { packagesApi } from '../../services/packages.api';
 import { RouteSummary } from '../../components/packages/RouteSummary';
 import { RouteDiagram } from '../../components/packages/RouteDiagram';
+import { Seo } from '../../components/seo/Seo';
+import { buildBreadcrumbList, buildTouristTrip } from '../../utils/structuredData';
 
 export function PackageDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -29,6 +31,19 @@ export function PackageDetailPage() {
 
   return (
     <article className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+      <Seo
+        title={`${pkg.title} (${pkg.nights}N/${pkg.days}D)`}
+        description={pkg.summary}
+        path={`/packages/${pkg.slug}`}
+        image={pkg.heroImageUrl ?? undefined}
+        jsonLd={[
+          buildTouristTrip(pkg),
+          buildBreadcrumbList([
+            { name: 'Packages', path: '/packages' },
+            { name: pkg.title, path: `/packages/${pkg.slug}` },
+          ]),
+        ]}
+      />
       <nav className="mb-4 text-sm text-stone/50">
         <Link to="/packages" className="hover:text-accent">
           Packages

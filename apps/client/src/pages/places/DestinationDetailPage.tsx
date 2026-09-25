@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { destinationsApi } from '../../services/destinations.api';
 import { DestinationCard } from '../../components/places/DestinationCard';
+import { Seo } from '../../components/seo/Seo';
+import { buildBreadcrumbList, buildTouristDestination } from '../../utils/structuredData';
 
 export function DestinationDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -31,6 +33,19 @@ export function DestinationDetailPage() {
 
   return (
     <article className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+      <Seo
+        title={data.name}
+        description={data.summary}
+        path={`/places/${data.slug}`}
+        image={data.heroImageUrl ?? undefined}
+        jsonLd={[
+          buildTouristDestination(data),
+          buildBreadcrumbList([
+            { name: 'Explore', path: '/places' },
+            { name: data.name, path: `/places/${data.slug}` },
+          ]),
+        ]}
+      />
       <nav className="mb-4 text-sm text-stone/50">
         <Link to="/places" className="hover:text-accent">
           Explore

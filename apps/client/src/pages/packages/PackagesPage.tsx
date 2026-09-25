@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { packagesApi } from '../../services/packages.api';
 import { PackageCard } from '../../components/packages/PackageCard';
+import { Seo } from '../../components/seo/Seo';
 
 export function PackagesPage() {
   const { data: packages, isLoading } = useQuery({
@@ -10,6 +11,11 @@ export function PackagesPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+      <Seo
+        title="Hand-picked Ladakh Trip Packages"
+        description="Curated day-by-day Ladakh routes — a 5-day quick escape, the classic 7-day Nubra-Pangong loop, the Manali-Leh motorcycle trip, and an off-beat Tso Moriri and Hanle circuit."
+        path="/packages"
+      />
       <h1 className="font-display text-3xl font-semibold text-stone">Hand-picked Ladakh trip packages</h1>
       <p className="mt-2 max-w-2xl text-stone/70">
         Curated, day-by-day routes — from a quick 5-day introduction to the classic Nubra-Pangong

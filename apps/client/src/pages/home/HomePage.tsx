@@ -5,6 +5,8 @@ import { destinationsApi } from '../../services/destinations.api';
 import { packagesApi } from '../../services/packages.api';
 import { DestinationCard } from '../../components/places/DestinationCard';
 import { PackageCard } from '../../components/packages/PackageCard';
+import { Seo } from '../../components/seo/Seo';
+import { buildWebSite } from '../../utils/structuredData';
 
 export function HomePage() {
   const { data, isLoading } = useQuery({
@@ -18,6 +20,12 @@ export function HomePage() {
 
   return (
     <div>
+      <Seo
+        title="Your intelligent guide to the Land of High Passes"
+        description="Explore Ladakh. Plan smarter. Travel deeper — destination knowledge, hand-picked trip packages, an itinerary planner, and an AI assistant grounded in verified local information."
+        path="/"
+        jsonLd={buildWebSite()}
+      />
       <section className="relative overflow-hidden bg-stone text-snow">
         <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-24 sm:px-6 sm:py-32">
           <motion.h1

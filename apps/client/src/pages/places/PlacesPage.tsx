@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { destinationsApi, searchApi } from '../../services/destinations.api';
 import { DestinationCard } from '../../components/places/DestinationCard';
+import { Seo } from '../../components/seo/Seo';
 
 export function PlacesPage() {
   const [category, setCategory] = useState<string | undefined>(undefined);
@@ -29,6 +30,11 @@ export function PlacesPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+      <Seo
+        title="Explore Ladakh — Lakes, Monasteries, Valleys & Passes"
+        description="Browse Ladakh's destinations by geography, interest, and travel style, or search in plain language — lakes, monasteries, valleys, and mountain passes."
+        path="/places"
+      />
       <h1 className="font-display text-3xl font-semibold text-stone">Explore Ladakh</h1>
       <p className="mt-2 max-w-2xl text-stone/70">
         Browse destinations by geography, interest, and travel style — or search in plain
